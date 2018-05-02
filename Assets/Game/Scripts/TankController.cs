@@ -26,6 +26,7 @@ public class TankController : MonoBehaviour {
 
     [Header("Tank")]
     [SerializeField] float speed;
+    [SerializeField] Rigidbody2D[] wheels;
     Rigidbody2D rigidbody;
 
     [Header("Ground check")]
@@ -56,13 +57,23 @@ public class TankController : MonoBehaviour {
     void Update() {
         if (grounded)
         {
-            if (Input.GetKey(KeyCode.A))
+            if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D))
             {
-                rigidbody.AddForce((transform.right * -1) * speed * Time.deltaTime);
+                
+                foreach (var x in wheels)
+                {
+                    x.constraints = RigidbodyConstraints2D.None;
+                }
+
+                var dir = transform.right * (Input.GetKey(KeyCode.A) ? 1 : - 1);
+                rigidbody.AddForce(dir * speed * Time.deltaTime);
             }
-            else if (Input.GetKey(KeyCode.D))
+            else
             {
-                rigidbody.AddForce(transform.right * speed * Time.deltaTime);
+                foreach(var x in wheels)
+                {
+                    x.constraints = RigidbodyConstraints2D.FreezeRotation;
+                }
             }
         }
 
